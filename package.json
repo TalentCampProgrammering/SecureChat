@@ -1,0 +1,14 @@
+{
+  "name": "WebSocketsBasics",
+  "version": "0.0.1",
+  "description": "My first WebSockets App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Bertram",
+  "license": "MIT",
+  "devDependencies": {
+    "socket.io": "^1.3.7"
+  }
+}

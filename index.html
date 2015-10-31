@@ -1,0 +1,63 @@
+<h1>Simple Realtime Chat!</h1>
+<div id="joinBox">
+	<textarea id="nameField"></textarea>
+	<input type="button" id="send" value="join" onclick="join()"/>
+</div>
+<div id="msgBox" style="visibility: hidden;">
+	<div id="chatField"></div>
+	<br/>
+	<textarea id="msgField"></textarea>
+	<input type="button" id="send" value="send" onclick="send()"/>
+	<br/>
+	<p>People:</p>
+	<div id="peopleField" disabled></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io.connect('http://localhost:1234');
+var nameField = document.getElementById("nameField");
+var msgField = document.getElementById("msgField");
+var chatField = document.getElementById("chatField");
+var peopleField = document.getElementById("peopleField");
+var ready = false;
+
+function join() {
+  if (nameField != "") {
+		socket.emit("join", nameField.value);
+		document.getElementById("joinBox").style.visibility = "hidden";
+		document.getElementById("msgBox").style.visibility = "visible";
+
+		ready = true;
+	}
+}
+
+socket.on('update', function (data) {
+	if (ready) {
+		chatField.innerHTML += "<br>" + data;
+	}
+});
+
+socket.on('update-people', function(people) {
+		peopleField.innerHTML = people;
+});
+
+socket.on('chat', function(who, msg) {
+	if (ready) {
+		chatField.innerHTML += "<br>" + who + ": " + msg;
+	}
+});
+
+function send() {
+  socket.emit('send', msgField.value);
+  msgField.value = "";
+}
+
+socket.on('disconnect', function() {
+	chatField.innerHTML += "The server is not available";
+
+	msgField.style.visibility = "hidden";
+	document.getElementById("send").style.visibility = "hidden";
+	peopleField.style.visibility = "hidden";
+});
+</script>
